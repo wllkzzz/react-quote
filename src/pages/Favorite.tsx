@@ -1,9 +1,11 @@
 import { useSelector } from 'react-redux';
 import FavoriteBlock from '../components/FavoriteBlock';
 import { Link } from 'react-router-dom';
+import React from 'react';
+import { RootState } from '../store/store';
 
-const Favorite = () => {
-  const favorite = useSelector((state) => state.favorite.data);
+const Favorite: React.FC = () => {
+  const favorite = useSelector((state: RootState) => state.favorite.data);
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
@@ -13,16 +15,13 @@ const Favorite = () => {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-      {
-        favorite.length > 0 ?
-        <div>
-            {favorite.map((item) => (
-          <FavoriteBlock key={item.id} item={item} />
-        ))}
-        </div>
-        :
-        <p>You don't seem to have any favorite quotes :(</p>
-      }
+        {favorite.length > 0 ? (
+          favorite.map((item) => (
+            <FavoriteBlock key={item.id} item={item} />
+          ))
+        ) : (
+          <p>You don't seem to have any favorite quotes :(</p>
+        )}
       </div>
     </div>
   );

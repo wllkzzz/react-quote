@@ -1,33 +1,53 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { RootState } from '../store';
 
+interface Quote {
+  id: number;
+  content: string;
+  originator?: {
+    name: string;
+  };
+}
+
+interface QuoteState {
+  quote: Quote;
+  lang: string;
+  status: 'loading' | 'success' | 'error';
+}
 
 const getInitialLanguage = () => localStorage.getItem('lang') || 'en';
 
-export const fetchQuote = createAsyncThunk(
+export const fetchQuote = createAsyncThunk<Quote>(
   'quote/fetchQuote',
-  async (_, { getState }) => {
-    const lang = getState().quote.lang;
-    const response = await axios({
-      method: 'GET',
-      url: 'https://quotes15.p.rapidapi.com/quotes/random/',
-      headers: {
-        'content-type': 'application/octet-stream',
-        'x-rapidapi-host': 'quotes15.p.rapidapi.com',
-        'x-rapidapi-key': 'c6668371d8msh585853737016304p167887jsne2d94889a20b',
-      },
-      params: {
-        language_code: lang,
-      },
-    });
+  async () => {
+    try {
+      const response = await axios.get('https://quotes15.p.rapidapi.com/quotes/random/', {
+        headers: {
+          'x-rapidapi-host': 'quotes15.p.rapidapi.com',
+          'x-rapidapi-key': 'c6668371d8msh585853737016304p167887jsne2d94889a20b',
+        },
+        params: {
+          language_code: getInitialLanguage(),
+        },
+      });
 
-    return response.data;
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 );
 
-const initialState = {
-  quote: [],
-  lang: getInitialLanguage(), 
+const initialState: QuoteState = {
+  quote: {
+    id: 0,
+    content: '',
+    originator: {
+      name: '',
+    },
+  },
+  lang: getInitialLanguage(),
   status: 'loading',
 };
 
@@ -46,7 +66,6 @@ export const quoteSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchQuote.pending, (state) => {
-        state.quote = [];
         state.status = 'loading';
       })
       .addCase(fetchQuote.fulfilled, (state, action) => {
@@ -54,7 +73,6 @@ export const quoteSlice = createSlice({
         state.quote = action.payload;
       })
       .addCase(fetchQuote.rejected, (state) => {
-        state.quote = [];
         state.status = 'error';
       });
   },

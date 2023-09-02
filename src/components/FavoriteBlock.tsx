@@ -1,7 +1,18 @@
 import { useDispatch } from "react-redux";
 import { deleteFromFavorite } from "../store/favorites/favoriteSlice";
+import React from 'react';
 
-const FavoriteBlock = ({ item }) => {
+interface FavoriteBlockProps {
+  item: {
+    id: number;
+    content: string;
+    originator?: {
+      name: string;
+    }
+  }
+}
+
+const FavoriteBlock: React.FC<FavoriteBlockProps> = ({ item }) => {
   const dispatch = useDispatch();
 
   return (
@@ -12,7 +23,7 @@ const FavoriteBlock = ({ item }) => {
       )}
       <div className="flex items-center gap-2">
         <button
-          onClick={() => dispatch(deleteFromFavorite(item))}
+          onClick={() => dispatch(deleteFromFavorite(item.id))}
           className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition duration-300"
         >
           Delete
@@ -23,3 +34,4 @@ const FavoriteBlock = ({ item }) => {
 };
 
 export default FavoriteBlock;
+

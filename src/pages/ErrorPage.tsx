@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 
 
-const ErrorPage = () => {
+const ErrorPage: React.FC = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       <div className="m-auto text-center">
